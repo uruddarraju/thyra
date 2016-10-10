@@ -94,6 +94,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/justinas/alice",
+			"repository": "https://github.com/justinas/alice",
+			"vcs": "git",
+			"revision": "1051eaf52fcafdd87ead59d28b065f1fcb8274ec",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/kr/fs",
 			"repository": "https://github.com/kr/fs",
 			"vcs": "git",
@@ -204,6 +212,14 @@
 			"revision": "faddd6128c66c4708f45fdc007f575f75e592a3c",
 			"branch": "master",
 			"path": "/codec",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/urfave/negroni",
+			"repository": "https://github.com/urfave/negroni",
+			"vcs": "git",
+			"revision": "3f7ce7b928e14ff890b067e5bbbc80af73690a9c",
+			"branch": "master",
 			"notests": true
 		},
 		{
