@@ -3,6 +3,7 @@ package subcommand
 import (
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
+	"github.com/uruddarraju/thyra/pkg/gateway"
 )
 
 var StartCmd = &cobra.Command{
@@ -10,6 +11,12 @@ var StartCmd = &cobra.Command{
 	Short: "Starts the api gateway service.",
 	Long:  "Starts the api gateway service and listens on few default endpoints.",
 	Run: func(cmd *cobra.Command, args []string) {
-		glog.Infof("Starting the thyra api gateway server....")
+		Run()
 	},
+}
+
+func Run() {
+	glog.Infof("Started the server.....")
+	gateway := gateway.NewDefaultGateway()
+	gateway.Start(nil)
 }
