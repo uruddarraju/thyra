@@ -70,6 +70,24 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/garyburd/redigo/internal",
+			"repository": "https://github.com/garyburd/redigo",
+			"vcs": "git",
+			"revision": "ffa8d46ada782d81cfda81a0fbd9f45ceae448e8",
+			"branch": "master",
+			"path": "internal",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/garyburd/redigo/redis",
+			"repository": "https://github.com/garyburd/redigo",
+			"vcs": "git",
+			"revision": "ffa8d46ada782d81cfda81a0fbd9f45ceae448e8",
+			"branch": "master",
+			"path": "/redis",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/golang/glog",
 			"repository": "https://github.com/golang/glog",
 			"vcs": "git",
@@ -90,6 +108,14 @@
 			"repository": "https://github.com/gorilla/mux",
 			"vcs": "git",
 			"revision": "757bef944d0f21880861c2dd9c871ca543023cba",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/hashicorp/golang-lru",
+			"repository": "https://github.com/hashicorp/golang-lru",
+			"vcs": "git",
+			"revision": "0a025b7e63adc15a622f29b0b2c4c3848243bbf6",
 			"branch": "master",
 			"notests": true
 		},
@@ -250,6 +276,14 @@
 			"repository": "https://github.com/spf13/viper",
 			"vcs": "git",
 			"revision": "ec4eb2fa8549869ae7a2accd4fcc83d1c0555c15",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/throttled/throttled",
+			"repository": "https://github.com/throttled/throttled",
+			"vcs": "git",
+			"revision": "9de1df62500edbd070ed9e5d4afe0ce1b8612892",
 			"branch": "master",
 			"notests": true
 		},
@@ -453,6 +487,14 @@
 			"revision": "3f83fa5005286a7fe593b055f0d7771a7dce4655",
 			"branch": "v2",
 			"path": "internal/json",
+			"notests": true
+		},
+		{
+			"importpath": "gopkg.in/throttled/throttled.v2",
+			"repository": "https://gopkg.in/throttled/throttled.v2",
+			"vcs": "git",
+			"revision": "b5675e93f9d999b22f92d859a5bf2138d3641af4",
+			"branch": "master",
 			"notests": true
 		},
 		{
