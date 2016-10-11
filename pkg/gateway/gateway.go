@@ -1,15 +1,16 @@
 package gateway
 
 import (
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/golang/glog"
 	"github.com/gorilla/mux"
+	"github.com/justinas/alice"
 	"github.com/uruddarraju/thyra/pkg/api/handlers/restapis"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
 	"github.com/uruddarraju/thyra/pkg/auth/authn/tokenfile"
-	authnmiddleware "github.com/uruddarraju/thyra/pkg/middleware/authn"
 )
 
 type Gateway struct {
@@ -49,10 +50,21 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 
 func AddDefaultHandlers(router *mux.Router, authenticator authn.Authenticator) {
 
-	router.HandleFunc("/", authnmiddleware.Authenticate(authenticator, restapis.RestAPIHandler))
-	router.HandleFunc("/hello", authnmiddleware.Authenticate(authenticator, HelloHandler))
-	router.HandleFunc("/metrics", authnmiddleware.Authenticate(authenticator, HelloHandler))
-	router.HandleFunc("/healthz", authnmiddleware.Authenticate(authenticator, HelloHandler))
+	chain := alice.New(authenticator.Authenticator, middlewareTwo)
+	router.Handle("/", chain.Then(http.HandlerFunc(restapis.RestAPIHandler)))
+	router.Handle("/hello", chain.Then(http.HandlerFunc(HelloHandler)))
+	router.Handle("/metrics", chain.Then(http.HandlerFunc(HelloHandler)))
+	router.Handle("/healthz", chain.Then(http.HandlerFunc(HelloHandler)))
+	router.Handle("/restapis", chain.Then(http.HandlerFunc(restapis.RestAPIHandler)))
+}
 
-	router.HandleFunc("/restapis", authnmiddleware.Authenticate(authenticator, restapis.RestAPIHandler))
+func middlewareTwo(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Executing middlewareTwo")
+		if r.URL.Path != "/" {
+			return
+		}
+		next.ServeHTTP(w, r)
+		log.Println("Executing middlewareTwo again")
+	})
 }

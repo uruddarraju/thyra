@@ -8,4 +8,5 @@ import (
 
 type Authenticator interface {
 	AuthenticateRequest(req *http.Request) (user.UserInfo, bool, error)
+	Authenticator(next http.Handler) http.Handler
 }
