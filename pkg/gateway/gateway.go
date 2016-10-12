@@ -6,29 +6,28 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/uruddarraju/thyra/pkg/api/handlers/restapis"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
-	"github.com/uruddarraju/thyra/pkg/auth/authn/union"
+	"github.com/uruddarraju/thyra/pkg/auth/authn/tokenfile"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Gateway struct {
 	Address       string
-	DefaultRouter *mux.Router
+	DefaultRouter *httprouter.Router
 	Server        *http.Server
 	Authenticator authn.Authenticator
 }
 
-type GatewayOpts struct{}
+type GatewayOpts struct{
+	KeystoneAuthnConfigFile string
+	BasicAuthnFile 		string
+}
 
 func NewDefaultGateway() *Gateway {
-	defaultRouter := mux.NewRouter()
-	authn, err := union.NewUnionAuthenticator("keystone-url", "token-file")
-	if err != nil {
-		glog.Errorf("Initializing Union Authentication Failed: %s", err.Error())
-		return nil
-	}
+	defaultRouter := httprouter.New()
+	authn := tokenfile.NewTokenAuthenticator("")
 	AddDefaultHandlers(defaultRouter, authn)
 	srv := &http.Server{
 		Handler:      defaultRouter,
@@ -52,14 +51,13 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Thyra....!\n"))
 }
 
-func AddDefaultHandlers(router *mux.Router, authenticator authn.Authenticator) {
-
+func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authenticator, ) {
 	chain := alice.New(authenticator.Authenticator, middlewareTwo)
-	router.Handle("/", chain.Then(http.HandlerFunc(restapis.RestAPIHandler)))
-	router.Handle("/hello", chain.Then(http.HandlerFunc(HelloHandler)))
-	router.Handle("/metrics", chain.Then(http.HandlerFunc(HelloHandler)))
-	router.Handle("/healthz", chain.Then(http.HandlerFunc(HelloHandler)))
-	router.Handle("/restapis", chain.Then(http.HandlerFunc(restapis.RestAPIHandler)))
+	router.GET("/", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
+	router.GET("/hello", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
+	router.GET("/metrics", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
+	router.GET("/healthz", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
+	router.GET("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
 }
 
 func middlewareTwo(next http.Handler) http.Handler {
@@ -71,4 +69,13 @@ func middlewareTwo(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 		log.Println("Executing middlewareTwo again")
 	})
+}
+
+// Essentially we are just taking the params and shoving them into the context and
+// returning a proper httprouter.Handle.
+func wrapHandler(h http.Handler) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request,
+	ps httprouter.Params) {
+		h.ServeHTTP(w, r)
+	}
 }
