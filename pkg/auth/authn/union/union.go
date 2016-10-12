@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
+	"github.com/uruddarraju/thyra/pkg/auth/authn/keystone"
+	"github.com/uruddarraju/thyra/pkg/auth/authn/tokenfile"
 	"github.com/uruddarraju/thyra/pkg/auth/user"
 )
 
@@ -14,7 +16,20 @@ type UnionAuthenticator struct {
 	authenticators []authn.Authenticator
 }
 
-func NewUnionAuthenticator(authenticators []authn.Authenticator) *UnionAuthenticator {
+func NewUnionAuthenticator(keystoneURL string, tokenFile string) (*UnionAuthenticator, error) {
+	authenticators := []authn.Authenticator{}
+	if keystoneURL != nil {
+		ka, err := keystone.NewKeystoneAuthenticator(keystoneURL)
+		if err != nil {
+			glog.Errorf("Unable to initialize Keystone authentication: %v", err)
+			return nil, fmt.Errorf("Unable to initialize Keystone authentication: %v", err)
+		}
+		authenticators = append(authenticators, ka)
+	}
+	if tokenFile != nil {
+		ta := tokenfile.NewTokenAuthenticator(tokenFile)
+		authenticators = append(authenticators, ta)
+	}
 	return &UnionAuthenticator{authenticators: authenticators}
 }
 

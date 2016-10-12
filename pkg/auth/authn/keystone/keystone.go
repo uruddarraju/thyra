@@ -23,7 +23,7 @@ func NewKeystoneAuthenticator(authURL string) (*KeystoneAuthenticator, error) {
 		return nil, errors.New("Auth URL is empty")
 	}
 
-	return &KeystoneAuthenticator{authURL}, nil
+	return &KeystoneAuthenticator{authURL: authURL}, nil
 }
 
 func (keystoneAuthenticator *KeystoneAuthenticator) AuthenticatePassword(username string, password string) (user.Info, bool, error) {

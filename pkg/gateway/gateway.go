@@ -10,7 +10,7 @@ import (
 	"github.com/justinas/alice"
 	"github.com/uruddarraju/thyra/pkg/api/handlers/restapis"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
-	"github.com/uruddarraju/thyra/pkg/auth/authn/tokenfile"
+	"github.com/uruddarraju/thyra/pkg/auth/authn/union"
 )
 
 type Gateway struct {
@@ -24,7 +24,11 @@ type GatewayOpts struct{}
 
 func NewDefaultGateway() *Gateway {
 	defaultRouter := mux.NewRouter()
-	authn := tokenfile.NewTokenAuthenticator("")
+	authn, err := union.NewUnionAuthenticator("keystone-url", "token-file")
+	if err != nil {
+		glog.Errorf("Initializing Union Authentication Failed: %s", err.Error())
+		return nil
+	}
 	AddDefaultHandlers(defaultRouter, authn)
 	srv := &http.Server{
 		Handler:      defaultRouter,
