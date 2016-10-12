@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/uruddarraju/thyra/pkg/auth/user"
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
+	"github.com/uruddarraju/thyra/pkg/auth/user"
 )
 
 type UnionAuthenticator struct {
@@ -23,7 +23,7 @@ func (ua *UnionAuthenticator) AuthenticateRequest(req *http.Request) (userInfo u
 	for _, authenticator := range ua.authenticators {
 		userInfo, authenticated, err = authenticator.AuthenticateRequest(req)
 		if err != nil || !authenticated {
-			continue;
+			continue
 		}
 		return
 	}
