@@ -520,6 +520,33 @@
 			"revision": "a5b47d31c556af34a302ce5d659e6fea44d90de0",
 			"branch": "v2",
 			"notests": true
+		},
+		{
+			"importpath": "k8s.io/kubernetes/pkg/util/goroutinemap",
+			"repository": "https://github.com/kubernetes/kubernetes",
+			"vcs": "git",
+			"revision": "fdcfb809b20719025b0f55d28f05f9b705039c46",
+			"branch": "master",
+			"path": "/pkg/util/goroutinemap",
+			"notests": true
+		},
+		{
+			"importpath": "k8s.io/kubernetes/pkg/util/runtime",
+			"repository": "https://github.com/kubernetes/kubernetes",
+			"vcs": "git",
+			"revision": "fdcfb809b20719025b0f55d28f05f9b705039c46",
+			"branch": "master",
+			"path": "pkg/util/runtime",
+			"notests": true
+		},
+		{
+			"importpath": "k8s.io/kubernetes/vendor/github.com/golang/glog",
+			"repository": "https://github.com/kubernetes/kubernetes",
+			"vcs": "git",
+			"revision": "fdcfb809b20719025b0f55d28f05f9b705039c46",
+			"branch": "master",
+			"path": "vendor/github.com/golang/glog",
+			"notests": true
 		}
 	]
 }

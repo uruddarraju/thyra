@@ -17,6 +17,6 @@ var StartCmd = &cobra.Command{
 
 func Run() {
 	glog.Infof("Started the server.....")
-	gateway := gateway.NewDefaultGateway()
+	gateway := gateway.DefaultGateway()
 	gateway.Start()
 }
