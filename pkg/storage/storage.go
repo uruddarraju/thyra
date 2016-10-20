@@ -1,9 +1,15 @@
 package storage
 
-type Storage interface{}
+type Storage interface {
+	Name() string
+}
 
 type EtcdStorage struct{}
 
-func NewDefaultStorage() *Storage {
+func NewDefaultStorage() Storage {
 	return &EtcdStorage{}
+}
+
+func (es *EtcdStorage) Name() string {
+	return "Etcd"
 }

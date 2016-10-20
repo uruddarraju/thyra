@@ -8,6 +8,10 @@ import (
 
 var gateway GatewayServer
 
+func CurrentGatewayServer() GatewayServer {
+	return gateway
+}
+
 type GatewayServer interface {
 	AddResource()
 	DeleteResource()
@@ -21,15 +25,14 @@ type GatewayServer interface {
 type DefaultGatewayServer struct {
 	server                  *http.Server
 	apiGroupResourceMapping map[string]string
-	storage                 *storage.Storage
+	storage                 storage.Storage
 }
 
-func InitGatewayServer(srv *http.Server) GatewayServer {
+func InitGatewayServer(srv *http.Server) {
 	gateway = &DefaultGatewayServer{
 		server:  srv,
 		storage: storage.NewDefaultStorage(),
 	}
-	return gateway
 }
 
 func (*DefaultGatewayServer) AddResource() {}

@@ -74,6 +74,8 @@ func (gw *gatewayImpl) Start() {
 }
 
 func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authenticator) {
+
+	// TODO: Add Union of authenticators
 	chain := alice.New(authenticator.Authenticator, middlewareTwo)
 	router.GET("/", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
 	router.GET("/hello", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))

@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"flag"
+	"flag"
 
 	"github.com/golang/glog"
 	"github.com/spf13/cobra"
@@ -19,7 +19,7 @@ var cmd = &cobra.Command{
 }
 
 func init() {
-	//flag.Parse()
+	flag.Parse()
 
 	cmd.AddCommand(subcommand.VersionCmd)
 	cmd.AddCommand(subcommand.StartCmd)
