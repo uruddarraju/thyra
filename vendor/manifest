@@ -522,21 +522,12 @@
 			"notests": true
 		},
 		{
-			"importpath": "k8s.io/kubernetes/pkg/util/goroutinemap",
-			"repository": "https://github.com/kubernetes/kubernetes",
-			"vcs": "git",
-			"revision": "fdcfb809b20719025b0f55d28f05f9b705039c46",
-			"branch": "master",
-			"path": "/pkg/util/goroutinemap",
-			"notests": true
-		},
-		{
 			"importpath": "k8s.io/kubernetes/pkg/util/runtime",
 			"repository": "https://github.com/kubernetes/kubernetes",
 			"vcs": "git",
-			"revision": "fdcfb809b20719025b0f55d28f05f9b705039c46",
+			"revision": "b559cc320045d5a3ff1491beb435c33f1db61934",
 			"branch": "master",
-			"path": "pkg/util/runtime",
+			"path": "/pkg/util/runtime",
 			"notests": true
 		},
 		{
