@@ -8,22 +8,3 @@ type GroupVersionKind struct {
 
 type APIGroup struct {
 }
-
-type RestAPIs struct {
-	Items []RestAPI
-}
-
-type RestAPI struct {
-	Name        string
-	Description string
-	CloneFrom   string
-}
-
-// http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html
-type DomainName struct {
-	Name                  string
-	CeritifcateName       string
-	CertificateBody       string
-	CertificatePrivateKey string
-	CertificateChain      string
-}
