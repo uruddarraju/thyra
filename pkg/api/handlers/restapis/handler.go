@@ -7,11 +7,28 @@ import (
 	"github.com/uruddarraju/thyra/pkg/api/server"
 )
 
-type RestAPI struct {
+func List(w http.ResponseWriter, r *http.Request) {
+	gatewayServer := server.CurrentGatewayServer()
+	glog.Infof("%s", gatewayServer)
 }
 
-func RestAPIHandler(w http.ResponseWriter, r *http.Request) {
+func Get(w http.ResponseWriter, r *http.Request) {
 	gatewayServer := server.CurrentGatewayServer()
+	test := r.Context().Value("test")
+	glog.Infof("%s/%s", gatewayServer, test)
+}
 
+func Post(w http.ResponseWriter, r *http.Request) {
+	gatewayServer := server.CurrentGatewayServer()
+	glog.Infof("%s", gatewayServer)
+}
+
+func Put(w http.ResponseWriter, r *http.Request) {
+	gatewayServer := server.CurrentGatewayServer()
+	glog.Infof("%s", gatewayServer)
+}
+
+func Delete(w http.ResponseWriter, r *http.Request) {
+	gatewayServer := server.CurrentGatewayServer()
 	glog.Infof("%s", gatewayServer)
 }

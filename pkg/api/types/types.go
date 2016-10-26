@@ -13,9 +13,9 @@ var (
 type ObjectMeta struct {
 	CreatedAt time.Time
 	DeletedAt time.Time
-	UpdateAt time.Time
-	Name string
-	UUID string
+	UpdateAt  time.Time
+	Name      string
+	UUID      string
 }
 
 type RestAPIs struct {

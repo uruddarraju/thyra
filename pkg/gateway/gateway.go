@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	//"github.com/gorilla/context"
+	"context"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 	"github.com/uruddarraju/thyra/pkg/api/handlers/restapis"
@@ -57,19 +59,15 @@ func DefaultGateway() Gateway {
 }
 
 func (gw *gatewayImpl) Start() {
-	go func() {
 
-	}()
-	go func() {
-		defer utilruntime.HandleCrash()
-		for {
-			server.InitGatewayServer(gw.Server)
-			if err := gw.Server.ListenAndServe(); err != nil {
-				glog.Errorf("Unable to listen for server (%v); will try again.", err)
-			}
-			time.Sleep(15 * time.Second)
+	defer utilruntime.HandleCrash()
+	for {
+		server.InitGatewayServer(gw.Server)
+		if err := gw.Server.ListenAndServe(); err != nil {
+			glog.Errorf("Unable to listen for server (%v); will try again.", err)
 		}
-	}()
+		time.Sleep(15 * time.Second)
+	}
 	glog.Fatalf("Server quit.....")
 }
 
@@ -77,15 +75,14 @@ func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authentic
 
 	// TODO: Add Union of authenticators
 	chain := alice.New(authenticator.Authenticator, middlewareTwo)
-	router.GET("/", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
+	router.GET("/", wrapHandler(chain.Then(http.HandlerFunc(restapis.Get))))
 	router.GET("/hello", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
 	router.GET("/metrics", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
 	router.GET("/healthz", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
 
-	router.GET("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
-	router.PUT("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
-	router.POST("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
-	router.DELETE("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.RestAPIHandler))))
+	router.GET("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.List))))
+	router.POST("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.Post))))
+
 }
 
 func middlewareTwo(next http.Handler) http.Handler {
@@ -99,9 +96,16 @@ func middlewareTwo(next http.Handler) http.Handler {
 	})
 }
 
+// We need to do this as the handler function for httprouter is different from that of a regular http.HandleFunc
 func wrapHandler(h http.Handler) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request,
 		ps httprouter.Params) {
+		// Setting the path parameters in the context
+		ctx := r.Context()
+		for _, param := range ps {
+			ctx = context.WithValue(ctx, param.Key, param.Value)
+		}
+		r = r.WithContext(ctx)
 		h.ServeHTTP(w, r)
 	}
 }
