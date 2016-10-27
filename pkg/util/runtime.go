@@ -3,15 +3,14 @@ package util
 import (
 	"fmt"
 	"runtime"
-	"time"
 
-	"github.com/golang/glog"
+	log "github.com/Sirupsen/logrus"
 )
 
 // logPanic logs the caller tree when a panic occurs.
 func logPanic(r interface{}) {
 	callers := getCallers(r)
-	glog.Errorf("Observed a panic: %#v (%v)\n%v", r, r, callers)
+	log.Errorf("Observed a panic: %#v (%v)\n%v", r, r, callers)
 }
 
 func getCallers(r interface{}) string {

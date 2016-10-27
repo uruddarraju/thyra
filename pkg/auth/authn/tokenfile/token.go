@@ -1,7 +1,7 @@
 package tokenfile
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"net/http"
 
 	"github.com/uruddarraju/thyra/pkg/auth/user"
@@ -22,8 +22,8 @@ func (ta *TokenAuthenticator) AuthenticateRequest(req *http.Request) (user.UserI
 
 func (ta *TokenAuthenticator) Authenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Executing authenticator")
+		log.Infof("Executing authenticator")
 		next.ServeHTTP(w, r)
-		log.Println("Executing authenticator again")
+		log.Infof("Executing authenticator again")
 	})
 }

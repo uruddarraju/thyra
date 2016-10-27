@@ -1,11 +1,10 @@
 package union
 
 import (
-	"log"
 	"net/http"
 
 	"fmt"
-	"github.com/golang/glog"
+	log "github.com/Sirupsen/logrus"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
 	"github.com/uruddarraju/thyra/pkg/auth/authn/keystone"
 	"github.com/uruddarraju/thyra/pkg/auth/authn/tokenfile"
@@ -21,7 +20,7 @@ func NewUnionAuthenticator(keystoneURL string, tokenFile string) (*UnionAuthenti
 	if keystoneURL != nil {
 		ka, err := keystone.NewKeystoneAuthenticator(keystoneURL)
 		if err != nil {
-			glog.Errorf("Unable to initialize Keystone authentication: %v", err)
+			log.Errorf("Unable to initialize Keystone authentication: %v", err)
 			return nil, fmt.Errorf("Unable to initialize Keystone authentication: %v", err)
 		}
 		authenticators = append(authenticators, ka)
@@ -49,7 +48,7 @@ func (ua *UnionAuthenticator) Authenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, authenticated, err := ua.AuthenticateRequest(r)
 		if !authenticated || err != nil {
-			glog.Warningf("Attempted administrative access with invalid or missing key!")
+			log.Warningf("Attempted administrative access with invalid or missing key!")
 			message := "Unauthorized"
 			w.WriteHeader(401)
 			fmt.Fprintf(w, message)
@@ -57,6 +56,6 @@ func (ua *UnionAuthenticator) Authenticator(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(w, r)
-		log.Println("Executing authenticator again")
+		log.Infof("Executing authenticator again")
 	})
 }

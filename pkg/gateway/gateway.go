@@ -1,14 +1,12 @@
 package gateway
 
 import (
-	"log"
+	"context"
 	"net/http"
 	"sync"
 	"time"
 
-	"github.com/golang/glog"
-	//"github.com/gorilla/context"
-	"context"
+	log "github.com/Sirupsen/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 	"github.com/uruddarraju/thyra/pkg/api/handlers/restapis"
@@ -64,11 +62,11 @@ func (gw *gatewayImpl) Start() {
 	for {
 		server.InitGatewayServer(gw.Server)
 		if err := gw.Server.ListenAndServe(); err != nil {
-			glog.Errorf("Unable to listen for server (%v); will try again.", err)
+			log.Errorf("Unable to listen for server (%v); will try again.", err)
 		}
 		time.Sleep(15 * time.Second)
 	}
-	glog.Fatalf("Server quit.....")
+	log.Fatalf("Server quit.....")
 }
 
 func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authenticator) {
@@ -87,12 +85,12 @@ func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authentic
 
 func middlewareTwo(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Executing middlewareTwo")
+		log.Infof("Executing middlewareTwo")
 		if r.URL.Path != "/" {
 			return
 		}
 		next.ServeHTTP(w, r)
-		log.Println("Executing middlewareTwo again")
+		log.Infof("Executing middlewareTwo again")
 	})
 }
 

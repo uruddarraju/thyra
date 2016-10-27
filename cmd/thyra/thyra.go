@@ -1,9 +1,7 @@
 package main
 
 import (
-	//"flag"
-
-	"github.com/golang/glog"
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/uruddarraju/thyra/cmd/thyra/subcommand"
@@ -14,12 +12,17 @@ var cmd = &cobra.Command{
 	Short: "thyra - an api gateway.",
 	Long:  `thyra - An opensource API Gateway service that simplifies creating APIs and managing them.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		glog.Infof("Ran successfully.......")
+		log.Infof("Ran successfully.......")
 	},
 }
 
 func init() {
-	//flag.Parse()
+
+	log.SetLevel(log.DebugLevel)
+	customFormatter := new(log.TextFormatter)
+	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	customFormatter.FullTimestamp = true
+	log.SetFormatter(customFormatter)
 
 	cmd.AddCommand(subcommand.VersionCmd)
 	cmd.AddCommand(subcommand.StartCmd)
@@ -37,13 +40,13 @@ func init() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		glog.Fatalf("Error loading thyra configuration: %v", err)
+		log.Fatalf("Error loading thyra configuration: %v", err)
 	}
-	glog.V(2).Infof("Successfully loaded thyra config")
+	log.Debug("Successfully loaded thyra config")
 }
 
 func main() {
-	glog.Infof("Starting up thyra api gateway......")
+	log.Debug("Starting up thyra api gateway......")
 	cmd.Execute()
 	return
 }

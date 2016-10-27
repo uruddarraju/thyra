@@ -4,10 +4,9 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/golang/glog"
+	log "github.com/Sirupsen/logrus"
 	"github.com/rackspace/gophercloud"
 	"github.com/rackspace/gophercloud/openstack"
-	"k8s.io/kubernetes/pkg/auth/user"
 )
 
 type KeystoneAuthenticator struct {
@@ -35,7 +34,7 @@ func (keystoneAuthenticator *KeystoneAuthenticator) AuthenticatePassword(usernam
 
 	_, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
-		glog.Info("Failed: Starting openstack authenticate client")
+		log.Info("Failed: Starting openstack authenticate client")
 		return nil, false, errors.New("Failed to authenticate")
 	}
 

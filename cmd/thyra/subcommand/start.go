@@ -1,7 +1,7 @@
 package subcommand
 
 import (
-	"github.com/golang/glog"
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/uruddarraju/thyra/pkg/gateway"
 )
@@ -16,7 +16,7 @@ var StartCmd = &cobra.Command{
 }
 
 func Run() {
-	glog.Infof("Started the server.....")
+	log.Infof("Started the server.....")
 	gateway := gateway.DefaultGateway()
 	gateway.Start()
 }

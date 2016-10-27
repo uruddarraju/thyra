@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/golang/glog"
+	log "github.com/Sirupsen/logrus"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
 )
 
@@ -17,7 +17,7 @@ func Authenticate(authenticator authn.Authenticator, handler func(http.ResponseW
 			fmt.Fprintf(w, responseMessage)
 			return
 		}
-		glog.Infof("Handler being called %s %s", user, authenticated)
+		log.Infof("Handler being called %s %s", user, authenticated)
 		handler(w, r)
 	}
 }
