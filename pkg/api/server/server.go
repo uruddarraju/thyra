@@ -30,8 +30,8 @@ type DefaultGatewayServer struct {
 
 func InitGatewayServer(srv *http.Server) {
 	gateway = &DefaultGatewayServer{
-		server:  srv,
-		storage: storage.NewDefaultStorage(),
+		server: srv,
+		//storage: storage.NewDefaultStorage(),
 	}
 }
 

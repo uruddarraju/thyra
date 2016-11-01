@@ -16,8 +16,8 @@ type ObjectMeta struct {
 	UpdateAt  time.Time
 	Name      string
 	UUID      string
-	Kind 	  string
-	Group 	  string
+	Kind      string
+	Group     string
 	Version   string
 }
 
@@ -35,8 +35,6 @@ type RestAPI struct {
 	CreatedAt   time.Time
 	LastUpdated time.Time
 }
-
-
 
 type Resources struct {
 	ObjectMeta
@@ -151,40 +149,38 @@ type Integrations struct {
 	Items []*Integration
 }
 
-func(r *RestAPIs) GetKind() { return "RestApis" }
-func(r *RestAPIs) GetGroup() { return "thyra" }
+func (r *RestAPIs) GetKind()  { return "RestApis" }
+func (r *RestAPIs) GetGroup() { return "thyra" }
 
-func(r *RestAPI) GetKind() { return "RestApi" }
-func(r *RestAPI) GetGroup() { return "thyra" }
+func (r *RestAPI) GetKind()  { return "RestApi" }
+func (r *RestAPI) GetGroup() { return "thyra" }
 
-func(r *Resources) GetKind() { return "Resources" }
-func(r *Resources) GetGroup() { return "thyra" }
+func (r *Resources) GetKind()  { return "Resources" }
+func (r *Resources) GetGroup() { return "thyra" }
 
-func(r *Resource) GetKind() { return "Resource" }
-func(r *Resource) GetGroup() { return "thyra" }
+func (r *Resource) GetKind()  { return "Resource" }
+func (r *Resource) GetGroup() { return "thyra" }
 
-func(r *Methods) GetKind() { return "Methods" }
-func(r *Methods) GetGroup() { return "thyra" }
+func (r *Methods) GetKind()  { return "Methods" }
+func (r *Methods) GetGroup() { return "thyra" }
 
-func(r *Method) GetKind() { return "Method" }
-func(r *Method) GetGroup() { return "thyra" }
+func (r *Method) GetKind()  { return "Method" }
+func (r *Method) GetGroup() { return "thyra" }
 
-func(r *Authorizers) GetKind() { return "Authorizers" }
-func(r *Authorizers) GetGroup() { return "thyra" }
+func (r *Authorizers) GetKind()  { return "Authorizers" }
+func (r *Authorizers) GetGroup() { return "thyra" }
 
-func(r *Authorizer) GetKind() { return "Authorizer" }
-func(r *Authorizer) GetGroup() { return "thyra" }
+func (r *Authorizer) GetKind()  { return "Authorizer" }
+func (r *Authorizer) GetGroup() { return "thyra" }
 
-func(r *Stages) GetKind() { return "Stages" }
-func(r *Stages) GetGroup() { return "thyra" }
+func (r *Stages) GetKind()  { return "Stages" }
+func (r *Stages) GetGroup() { return "thyra" }
 
-func(r *Stage) GetKind() { return "Stage" }
-func(r *Stage) GetGroup() { return "thyra" }
+func (r *Stage) GetKind()  { return "Stage" }
+func (r *Stage) GetGroup() { return "thyra" }
 
-func(r *Integrations) GetKind() { return "Integrations" }
-func(r *Integrations) GetGroup() { return "thyra" }
+func (r *Integrations) GetKind()  { return "Integrations" }
+func (r *Integrations) GetGroup() { return "thyra" }
 
-func(r *Integration) GetKind() { return "Integration" }
-func(r *Integration) GetGroup() { return "thyra" }
-
-
+func (r *Integration) GetKind()  { return "Integration" }
+func (r *Integration) GetGroup() { return "thyra" }
