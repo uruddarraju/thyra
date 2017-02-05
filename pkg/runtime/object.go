@@ -1,3 +1,7 @@
 package runtime
 
-type Object struct{}
+type Object interface {
+	GetKind() string
+	GetGroup() string
+	GetMetadata() map[string]string
+}
