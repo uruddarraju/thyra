@@ -3,7 +3,7 @@ package storage
 import (
 	"context"
 
-	"github.com/uruddarraju/thyra/pkg/runtime"
+	"github.com/uruddarraju/thyra/pkg/api/runtime"
 )
 
 // The limitation now is that there can only be one storage provider for all objects registered to the api gateway
@@ -20,9 +20,9 @@ type Storage interface {
 	UnregisterGroup(ctx context.Context, group string) error
 	RegisterKind(ctx context.Context, group string, kind string) error
 	UnregisterKind(ctx context.Context, group string, kind string) error
-	List(ctx context.Context, options ListOptions) ([]runtime.Object, error)
-	Get(ctx context.Context, lookup runtime.Object) (runtime.Object, error)
-	Create(ctx context.Context, item runtime.Object) error
-	Update(ctx context.Context, item runtime.Object, original runtime.Object) (runtime.Object, error)
-	Delete(ctx context.Context, item runtime.Object) error
+	List(ctx context.Context, options ListOptions) ([]api.Object, error)
+	Get(ctx context.Context, lookup api.Object) (api.Object, error)
+	Create(ctx context.Context, item api.Object) error
+	Update(ctx context.Context, item api.Object, original api.Object) (api.Object, error)
+	Delete(ctx context.Context, item api.Object) error
 }
