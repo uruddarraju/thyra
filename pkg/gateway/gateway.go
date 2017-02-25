@@ -53,7 +53,6 @@ func DefaultGateway() Interface {
 		}
 	})
 	return gateway
-
 }
 
 func (gw *defaultGateway) Start() {
@@ -76,8 +75,7 @@ func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authentic
 	router.GET("/", wrapHandler(chain.Then(http.HandlerFunc(restapis.Get))))
 	router.GET("/hello", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
 	router.GET("/metrics", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
-	router.GET("/healthz", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
-
+	router.GET("/healthz", wrapHandler(chain.Then(http.HandlerFunc(HealthzHandler))))
 	router.GET("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.List))))
 	router.POST("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.Post))))
 
@@ -86,9 +84,10 @@ func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authentic
 func middlewareTwo(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Infof("Executing middlewareTwo")
-		if r.URL.Path != "/" {
+		if r.URL.Path == "/" {
 			return
 		}
+		log.Infof("Executing middlewareTwo .")
 		next.ServeHTTP(w, r)
 		log.Infof("Executing middlewareTwo again")
 	})
@@ -110,4 +109,8 @@ func wrapHandler(h http.Handler) httprouter.Handle {
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Thyra....!\n"))
+}
+
+func HealthzHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("ok"))
 }

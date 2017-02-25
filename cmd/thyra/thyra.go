@@ -29,7 +29,7 @@ func init() {
 
 	viper.SetEnvPrefix("thyra")
 	viper.SetConfigName("thyra")
-	viper.AddConfigPath("/Users/alekhya/go/src/github.com/uruddarraju/thyra/")
+	viper.AddConfigPath("/Users/uruddarraju/go/src/github.com/uruddarraju/thyra/")
 	viper.AutomaticEnv()
 	viper.SetConfigType("json")
 
