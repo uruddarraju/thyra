@@ -16,26 +16,26 @@ import (
 	utilruntime "k8s.io/kubernetes/pkg/util/runtime"
 )
 
-var gateway *gatewayImpl
+var gateway *defaultGateway
 var once sync.Once
 
-type Gateway interface {
+type Interface interface {
 	Start()
 }
 
-type GatewayOpts struct {
+type Opts struct {
 	KeystoneAuthnConfigFile string
 	BasicAuthnFile          string
 }
 
-type gatewayImpl struct {
+type defaultGateway struct {
 	Address       string
 	DefaultRouter *httprouter.Router
 	Server        *http.Server
 	Authenticator authn.Authenticator
 }
 
-func DefaultGateway() Gateway {
+func DefaultGateway() Interface {
 	once.Do(func() {
 		defaultRouter := httprouter.New()
 		authn := tokenfile.NewTokenAuthenticator("")
@@ -47,7 +47,7 @@ func DefaultGateway() Gateway {
 			ReadTimeout:  15 * time.Second,
 		}
 
-		gateway = &gatewayImpl{
+		gateway = &defaultGateway{
 			DefaultRouter: defaultRouter,
 			Server:        srv,
 		}
@@ -56,7 +56,7 @@ func DefaultGateway() Gateway {
 
 }
 
-func (gw *gatewayImpl) Start() {
+func (gw *defaultGateway) Start() {
 
 	defer utilruntime.HandleCrash()
 	for {

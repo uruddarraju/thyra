@@ -18,11 +18,11 @@ func NewDuplicateEntryError(message string) error {
 	return DuplicateEntryError{message: fmt.Sprintf("Duplicate entry for the object: %s", message)}
 }
 
-func (e *NotFoundError) Error() string {
+func (e NotFoundError) Error() string {
 	return e.message
 }
 
-func (e *DuplicateEntryError) Error() string {
+func (e DuplicateEntryError) Error() string {
 	return e.message
 }
 
