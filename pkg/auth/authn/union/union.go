@@ -6,9 +6,9 @@ import (
 	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
-	"github.com/uruddarraju/thyra/pkg/auth/authn/keystone"
-	"github.com/uruddarraju/thyra/pkg/auth/authn/tokenfile"
 	"github.com/uruddarraju/thyra/pkg/auth/user"
+	"github.com/uruddarraju/thyra/pkg/plugins/authentication/keystone"
+	"github.com/uruddarraju/thyra/pkg/plugins/authentication/tokenfile"
 )
 
 type UnionAuthenticator struct {
@@ -17,7 +17,7 @@ type UnionAuthenticator struct {
 
 func NewUnionAuthenticator(keystoneURL string, tokenFile string) (*UnionAuthenticator, error) {
 	authenticators := []authn.Authenticator{}
-	if keystoneURL != nil {
+	if len(keystoneURL) > 0 {
 		ka, err := keystone.NewKeystoneAuthenticator(keystoneURL)
 		if err != nil {
 			log.Errorf("Unable to initialize Keystone authentication: %v", err)
@@ -25,11 +25,11 @@ func NewUnionAuthenticator(keystoneURL string, tokenFile string) (*UnionAuthenti
 		}
 		authenticators = append(authenticators, ka)
 	}
-	if tokenFile != nil {
+	if len(tokenFile) > 0 {
 		ta := tokenfile.NewTokenAuthenticator(tokenFile)
 		authenticators = append(authenticators, ta)
 	}
-	return &UnionAuthenticator{authenticators: authenticators}
+	return &UnionAuthenticator{authenticators: authenticators}, nil
 }
 
 // TODO: Add authentication logic here to read of a token file and populate the user context

@@ -2,19 +2,21 @@ package keystone
 
 import (
 	"errors"
+	"net/http"
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/rackspace/gophercloud"
 	"github.com/rackspace/gophercloud/openstack"
+	"github.com/uruddarraju/thyra/pkg/auth/user"
 )
 
-type KeystoneAuthenticator struct {
+type authenticator struct {
 	authURL string
 }
 
 // NewKeystoneAuthenticator returns a password authenticator that validates credentials using openstack keystone
-func NewKeystoneAuthenticator(authURL string) (*KeystoneAuthenticator, error) {
+func NewKeystoneAuthenticator(authURL string) (*authenticator, error) {
 	if !strings.HasPrefix(authURL, "https") {
 		return nil, errors.New("Auth URL should be secure and start with https")
 	}
@@ -22,10 +24,11 @@ func NewKeystoneAuthenticator(authURL string) (*KeystoneAuthenticator, error) {
 		return nil, errors.New("Auth URL is empty")
 	}
 
-	return &KeystoneAuthenticator{authURL: authURL}, nil
+	return &authenticator{authURL: authURL}, nil
 }
 
-func (keystoneAuthenticator *KeystoneAuthenticator) AuthenticatePassword(username string, password string) (user.Info, bool, error) {
+func (keystoneAuthenticator *authenticator) AuthenticateRequest(req *http.Request) (userInfo user.UserInfo, authenticated bool, err error) {
+
 	opts := gophercloud.AuthOptions{
 		IdentityEndpoint: keystoneAuthenticator.authURL,
 		Username:         username,
