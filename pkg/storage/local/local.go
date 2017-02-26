@@ -1,12 +1,12 @@
 package local
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
 	"github.com/uruddarraju/thyra/pkg/api/runtime"
 	"github.com/uruddarraju/thyra/pkg/storage"
-	"golang.org/x/net/context"
 )
 
 // Storage is an implementation of the Storage interface.
@@ -19,12 +19,18 @@ type Storage struct {
 	store map[string]map[string]map[string]runtime.Object
 }
 
+func NewLocalStorage() storage.Storage {
+	return &Storage{
+		store: make(map[string]map[string]map[string]runtime.Object),
+	}
+}
+
 // RegisterGroup registers a new apiGroup to thyra.
 func (ls *Storage) RegisterGroup(ctx context.Context, group string) error {
 	if ls.isGroupRegistered(group) {
 		return nil
 	}
-	ls.store[group] = make(map[string]map[string]runtime.Object)
+	ls.store[group] = nil
 	return nil
 }
 
@@ -40,20 +46,22 @@ func (ls *Storage) UnregisterGroup(ctx context.Context, group string) error {
 
 // RegisterKind registers a Kind to an existing apiGroup.
 // If the apiGroup does not exist, it returns a NotFoundError.
-func (ls *Storage) RegisterKind(ctx context.Context, group string, kind string) error {
-	objGroup := group
-	groupStore, groupFound := ls.store[objGroup]
+func (ls *Storage) RegisterKind(ctx context.Context, apiGroup string, kind string) error {
+	groupStore, groupFound := ls.store[apiGroup]
 	if !groupFound {
-		return storage.NewNotFoundError(fmt.Sprintf("Unable to find group %s, check if it already registered to storage", objGroup))
+		return storage.NewNotFoundError(fmt.Sprintf("Unable to find group %s, check if it already registered to storage", apiGroup))
 	}
 
-	objType := kind
-	typeStore, typeFound := groupStore[objType]
+	if groupStore == nil {
+		ls.store[apiGroup] = make(map[string]map[string]runtime.Object)
+		groupStore = ls.store[apiGroup]
+	}
+
+	_, typeFound := groupStore[kind]
 	if typeFound {
 		return nil
 	}
-
-	typeStore[kind] = make(map[string]runtime.Object)
+	groupStore[kind] = make(map[string]runtime.Object)
 	return nil
 }
 
@@ -86,28 +94,30 @@ func (ls *Storage) List(ctx context.Context, options storage.ListOptions) ([]run
 	objType := options.Type
 	typeStore, typeFound := groupStore[objType]
 	if !typeFound {
+		fmt.Println(ls.store)
 		return nil, storage.NewNotFoundError(fmt.Sprintf("Unable to find type %s, check if it already registered to storage", objType))
 	}
+
+	result := make([]runtime.Object, 0)
 
 	// The storage should also make sure that all entries have unique name for a given object type
 	// So, a name filter would trump any other filter provided in the options
 	if len(options.Name) > 0 {
-		result, exists := typeStore[options.Name]
+		object, exists := typeStore[options.Name]
 		if !exists {
 			return nil, storage.NewNotFoundError(fmt.Sprintf("Object %s/%s/%s not found", objGroup, objType, options.Name))
 		}
-		return result, nil
+		return append(result, object), nil
 	}
 
 	// Very inefficient to do Lists as we are iterating on maps, but for local, this should be ok.
-	result := make([]runtime.Object, 0)
 	for _, v := range typeStore {
 		if ls.filter(v, options.LabelSelector) {
-			append(result, v)
+			result = append(result, v)
 		}
 	}
 
-	return nil, result
+	return result, nil
 }
 
 func (ls *Storage) Get(ctx context.Context, lookup runtime.Object) (runtime.Object, error) {
@@ -154,15 +164,15 @@ func (ls *Storage) Update(ctx context.Context, item runtime.Object, original run
 
 	// TODO Should we check what attributes can be changed and not changed here or at the calling function ?
 	if err := ls.validateGroupKindRegistration(original.GetGroup(), original.GetKind()); err != nil {
-		return err
+		return nil, err
 	}
 
 	if obj, err := ls.Get(ctx, original); err != nil && storage.IsNotFoundError(err) {
-		return storage.NewNotFoundError(fmt.Sprintf("Object with name %s does not exist", original.GetMetadata().Name))
+		return nil, storage.NewNotFoundError(fmt.Sprintf("Object with name %s does not exist", original.GetMetadata().Name))
 	} else if err != nil {
 		return nil, err
 	} else if obj == nil {
-		return storage.NewNotFoundError(fmt.Sprintf("Object with name %s does not exist", original.GetMetadata().Name))
+		return nil, storage.NewNotFoundError(fmt.Sprintf("Object with name %s does not exist", original.GetMetadata().Name))
 	}
 
 	typeStore, _ := ls.store[original.GetGroup()][original.GetKind()]
@@ -178,7 +188,7 @@ func (ls *Storage) Delete(ctx context.Context, item runtime.Object) error {
 	if obj, err := ls.Get(ctx, item); err != nil && storage.IsNotFoundError(err) {
 		return storage.NewNotFoundError(fmt.Sprintf("Object with name %s does not exist", item.GetMetadata().Name))
 	} else if err != nil {
-		return nil, err
+		return err
 	} else if obj == nil {
 		return nil
 	}
