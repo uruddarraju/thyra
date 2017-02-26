@@ -9,10 +9,12 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/uruddarraju/thyra/pkg/api/handlers/restapis"
 	"github.com/uruddarraju/thyra/pkg/api/server"
+	"github.com/uruddarraju/thyra/pkg/api/types"
 	"github.com/uruddarraju/thyra/pkg/auth/authn"
-	"github.com/uruddarraju/thyra/pkg/auth/authn/tokenfile"
+	"github.com/uruddarraju/thyra/pkg/plugins/authentication/token/tokenfile"
 	utilruntime "k8s.io/kubernetes/pkg/util/runtime"
 )
 
@@ -38,8 +40,6 @@ type defaultGateway struct {
 func DefaultGateway() Interface {
 	once.Do(func() {
 		defaultRouter := httprouter.New()
-		authn := tokenfile.NewTokenAuthenticator("")
-		AddDefaultHandlers(defaultRouter, authn)
 		srv := &http.Server{
 			Handler:      defaultRouter,
 			Addr:         "127.0.0.1:8000",
@@ -59,27 +59,40 @@ func (gw *defaultGateway) Start() {
 
 	defer utilruntime.HandleCrash()
 	for {
+		authn := tokenfile.NewTokenAuthenticator("")
 		server.InitGatewayServer(gw.Server)
+		gw.AddDefaultHandlers(gw.DefaultRouter, authn)
+
+		chain := alice.New(authn.Authenticator, middlewareTwo)
+		gwServer := server.CurrentGatewayServer()
+		gwServer.AddAPIGroup("thyra")
+		gwServer.AddResource("thyra", "restapis")
+		gwServer.AddMethod("thyra", "restapis", api.HTTPGet)
+		gw.DefaultRouter.GET("/thyra/restapis/:name", wrapHandler(chain.Then(http.HandlerFunc(restapis.Get))))
+		gw.DefaultRouter.GET("/thyra/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.List))))
+
 		if err := gw.Server.ListenAndServe(); err != nil {
 			log.Errorf("Unable to listen for server (%v); will try again.", err)
 		}
+
 		time.Sleep(15 * time.Second)
 	}
 	log.Fatalf("Server quit.....")
 }
 
-func AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authenticator) {
+func (gw *defaultGateway) AddDefaultHandlers(router *httprouter.Router, authenticator authn.Authenticator) {
 
 	// TODO: Add Union of authenticators
 	chain := alice.New(authenticator.Authenticator, middlewareTwo)
 	router.GET("/", wrapHandler(chain.Then(http.HandlerFunc(restapis.Get))))
 	router.GET("/hello", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
-	router.GET("/metrics", wrapHandler(chain.Then(http.HandlerFunc(HelloHandler))))
 	router.GET("/healthz", wrapHandler(chain.Then(http.HandlerFunc(HealthzHandler))))
-	router.GET("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.List))))
-	router.POST("/restapis", wrapHandler(chain.Then(http.HandlerFunc(restapis.Post))))
+
+	router.GET("/metrics", wrapHandler(chain.Then(http.HandlerFunc(defaultMetricsHandler))))
 
 }
+
+var defaultMetricsHandler = prometheus.Handler().ServeHTTP
 
 func middlewareTwo(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -3,7 +3,9 @@ package server
 import (
 	"net/http"
 
+	"github.com/uruddarraju/thyra/pkg/api/types"
 	"github.com/uruddarraju/thyra/pkg/storage"
+	"github.com/uruddarraju/thyra/pkg/storage/local"
 )
 
 var gateway GatewayServer
@@ -13,36 +15,48 @@ func CurrentGatewayServer() GatewayServer {
 }
 
 type GatewayServer interface {
-	AddResource()
-	DeleteResource()
-	AddMethod()
-	DeleteMethod()
-
-	AddAPIGroup()
-	DeleteAPIGroup()
+	AddAPIGroup(apiGroup string)
+	DeleteAPIGroup(apiGroup string)
+	AddResource(apiGroup, kind string)
+	DeleteResource(apiGroup, kind string)
+	AddMethod(apiGroup, kind string, method api.HttpMethod)
+	DeleteMethod(apiGroup, kind string, method api.HttpMethod)
+	Storage() storage.Storage
 }
 
-type DefaultGatewayServer struct {
+type defaultGatewayServer struct {
 	server                  *http.Server
 	apiGroupResourceMapping map[string]string
 	storage                 storage.Storage
 }
 
 func InitGatewayServer(srv *http.Server) {
-	gateway = &DefaultGatewayServer{
-		server: srv,
-		//storage: storage.NewDefaultStorage(),
+	gateway = &defaultGatewayServer{
+		server:  srv,
+		storage: local.NewLocalStorage(),
 	}
 }
 
-func (*DefaultGatewayServer) AddResource() {}
+func (gs *defaultGatewayServer) AddResource(apiGroup, kind string) {
+	err := gs.storage.RegisterKind(nil, apiGroup, kind)
+	if err != nil {
+		return
+	}
+}
 
-func (*DefaultGatewayServer) AddMethod() {}
+func (*defaultGatewayServer) AddMethod(apiGroup, kind string, method api.HttpMethod) {}
 
-func (*DefaultGatewayServer) DeleteResource() {}
+func (*defaultGatewayServer) DeleteResource(apiGroup, kind string) {}
 
-func (*DefaultGatewayServer) DeleteMethod() {}
+func (*defaultGatewayServer) DeleteMethod(apiGroup, kind string, method api.HttpMethod) {}
 
-func (*DefaultGatewayServer) AddAPIGroup() {}
+func (gs *defaultGatewayServer) AddAPIGroup(apiGroup string) {
+	err := gs.storage.RegisterGroup(nil, apiGroup)
+	if err != nil {
+		return
+	}
+}
 
-func (*DefaultGatewayServer) DeleteAPIGroup() {}
+func (*defaultGatewayServer) DeleteAPIGroup(apiGroup string) {}
+
+func (gs *defaultGatewayServer) Storage() storage.Storage { return gs.storage }
