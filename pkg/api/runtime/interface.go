@@ -7,5 +7,5 @@ import (
 type Object interface {
 	GetKind() string
 	GetGroup() string
-	GetMetadata() api.ObjectMeta
+	GetMetadata() *api.ObjectMeta
 }
