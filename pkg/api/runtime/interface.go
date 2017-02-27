@@ -1,11 +1,11 @@
 package runtime
 
 import (
-	"github.com/uruddarraju/thyra/pkg/api/types"
+	"github.com/uruddarraju/thyra/pkg/apis/thyra"
 )
 
 type Object interface {
 	GetKind() string
 	GetGroup() string
-	GetMetadata() *api.ObjectMeta
+	GetMetadata() *thyra.ObjectMeta
 }

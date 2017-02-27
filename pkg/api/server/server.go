@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/uruddarraju/thyra/pkg/api/types"
+	"github.com/uruddarraju/thyra/pkg/apis/thyra"
 	"github.com/uruddarraju/thyra/pkg/storage"
 	"github.com/uruddarraju/thyra/pkg/storage/local"
 )
@@ -19,8 +19,8 @@ type GatewayServer interface {
 	DeleteAPIGroup(apiGroup string)
 	AddResource(apiGroup, kind string)
 	DeleteResource(apiGroup, kind string)
-	AddMethod(apiGroup, kind string, method api.HttpMethod)
-	DeleteMethod(apiGroup, kind string, method api.HttpMethod)
+	AddMethod(apiGroup, kind string, method thyra.HttpMethod)
+	DeleteMethod(apiGroup, kind string, method thyra.HttpMethod)
 	Storage() storage.Storage
 }
 
@@ -44,11 +44,11 @@ func (gs *defaultGatewayServer) AddResource(apiGroup, kind string) {
 	}
 }
 
-func (*defaultGatewayServer) AddMethod(apiGroup, kind string, method api.HttpMethod) {}
+func (*defaultGatewayServer) AddMethod(apiGroup, kind string, method thyra.HttpMethod) {}
 
 func (*defaultGatewayServer) DeleteResource(apiGroup, kind string) {}
 
-func (*defaultGatewayServer) DeleteMethod(apiGroup, kind string, method api.HttpMethod) {}
+func (*defaultGatewayServer) DeleteMethod(apiGroup, kind string, method thyra.HttpMethod) {}
 
 func (gs *defaultGatewayServer) AddAPIGroup(apiGroup string) {
 	err := gs.storage.RegisterGroup(nil, apiGroup)

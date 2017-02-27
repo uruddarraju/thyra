@@ -17,7 +17,6 @@ var cmd = &cobra.Command{
 }
 
 func init() {
-
 	log.SetLevel(log.DebugLevel)
 	customFormatter := new(log.TextFormatter)
 	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
@@ -29,7 +28,7 @@ func init() {
 
 	viper.SetEnvPrefix("thyra")
 	viper.SetConfigName("thyra")
-	viper.AddConfigPath("/Users/uruddarraju/go/src/github.com/uruddarraju/thyra/")
+	viper.AddConfigPath("/Users/alekhya/go/src/github.com/uruddarraju/thyra/")
 	viper.AutomaticEnv()
 	viper.SetConfigType("json")
 

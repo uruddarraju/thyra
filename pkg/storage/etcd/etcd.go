@@ -1,5 +1,7 @@
 package etcd
 
+// TODO: Implement an etcd storage
+
 type Storage interface {
 	Name() string
 }
