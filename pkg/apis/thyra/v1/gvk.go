@@ -6,5 +6,4 @@ type GroupVersionKind struct {
 	Kind    string
 }
 
-type APIGroup struct {
-}
+type APIGroup struct{}

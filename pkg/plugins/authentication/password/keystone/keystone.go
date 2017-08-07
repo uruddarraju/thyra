@@ -27,12 +27,13 @@ func NewKeystoneAuthenticator(authURL string) (*authenticator, error) {
 	return &authenticator{authURL: authURL}, nil
 }
 
-func (keystoneAuthenticator *authenticator) AuthenticateRequest(req *http.Request) (userInfo user.UserInfo, authenticated bool, err error) {
+// TODO: Make this work with actual username and password
+func (keystoneAuthenticator *authenticator) AuthenticateRequest(req *http.Request) (user.UserInfo, bool, error) {
 
 	opts := gophercloud.AuthOptions{
 		IdentityEndpoint: keystoneAuthenticator.authURL,
-		Username:         username,
-		Password:         password,
+		Username:         "username",
+		Password:         "password",
 	}
 
 	_, err := openstack.AuthenticatedClient(opts)
@@ -41,5 +42,5 @@ func (keystoneAuthenticator *authenticator) AuthenticateRequest(req *http.Reques
 		return nil, false, errors.New("Failed to authenticate")
 	}
 
-	return &user.DefaultInfo{Name: username}, true, nil
+	return &user.UserInfo{Username: "username"}, true, nil
 }

@@ -193,6 +193,19 @@ type Integrations struct {
 	Items []*Integration
 }
 
+type ResourceData struct {
+	ObjectMeta
+
+	// Data is the raw JSON data for this data.
+	// +optional
+	Data []byte
+}
+
+type ResourceDataList struct {
+	ObjectMeta
+	Items []*ResourceData
+}
+
 func (r *RestAPIs) GetKind() string         { return "RestApis" }
 func (r *RestAPIs) GetGroup() string        { return "thyra" }
 func (r *RestAPIs) GetMetadata() ObjectMeta { return r.ObjectMeta }

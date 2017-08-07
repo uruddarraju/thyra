@@ -157,9 +157,7 @@ func middlewareTwo(next http.Handler) http.Handler {
 		if r.URL.Path == "/" {
 			return
 		}
-		log.Infof("Executing middlewareTwo .")
 		next.ServeHTTP(w, r)
-		log.Infof("Executing middlewareTwo again")
 	})
 }
 

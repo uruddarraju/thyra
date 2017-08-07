@@ -44,11 +44,11 @@ func (gs *defaultGatewayServer) AddResource(apiGroup, kind string) {
 	}
 }
 
-func (*defaultGatewayServer) AddMethod(apiGroup, kind string, method thyra.HttpMethod) {}
+func (gs *defaultGatewayServer) AddMethod(apiGroup, kind string, method thyra.HttpMethod) {}
 
-func (*defaultGatewayServer) DeleteResource(apiGroup, kind string) {}
+func (gs *defaultGatewayServer) DeleteResource(apiGroup, kind string) {}
 
-func (*defaultGatewayServer) DeleteMethod(apiGroup, kind string, method thyra.HttpMethod) {}
+func (gs *defaultGatewayServer) DeleteMethod(apiGroup, kind string, method thyra.HttpMethod) {}
 
 func (gs *defaultGatewayServer) AddAPIGroup(apiGroup string) {
 	err := gs.storage.RegisterGroup(nil, apiGroup)
@@ -57,6 +57,6 @@ func (gs *defaultGatewayServer) AddAPIGroup(apiGroup string) {
 	}
 }
 
-func (*defaultGatewayServer) DeleteAPIGroup(apiGroup string) {}
+func (gs *defaultGatewayServer) DeleteAPIGroup(apiGroup string) {}
 
 func (gs *defaultGatewayServer) Storage() storage.Storage { return gs.storage }

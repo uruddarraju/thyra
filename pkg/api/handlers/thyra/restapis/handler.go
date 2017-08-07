@@ -31,6 +31,8 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 func Post(w http.ResponseWriter, r *http.Request) {
 	gatewayServer := server.CurrentGatewayServer()
+	ctx := r.Context()
+	gatewayServer.Storage().Create(ctx)
 	log.Infof("%s", gatewayServer)
 }
 
